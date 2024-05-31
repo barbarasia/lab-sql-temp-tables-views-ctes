@@ -7,8 +7,11 @@
 -- First, create a view that summarizes rental information for each customer. 
 -- The view should include the customer's ID, name, email address, and total number of rentals (rental_count).
 
-create view v_customer_rental_info as
-select sakila.customer.customer_id, sakila.customer.last_name, sakila.customer.email, count(sakila.rental.rental_id) as rental_count
+create view v_customer_rental_info as   #we can use ALTER to change the view
+select sakila.customer.customer_id, 
+		sakila.customer.last_name, 
+		sakila.customer.email, 
+        count(sakila.rental.rental_id) as rental_count
 from sakila.customer
 left join sakila.rental
 	using(customer_id)
@@ -21,8 +24,11 @@ select * from v_customer_rental_info;
 -- The Temporary Table should use the rental summary view created in Step 1 to join with the payment table and calculate the total amount paid by each customer.
 
 create temporary table tt_total_paid as
-select  customer_id, last_name, email, sum(amount) as total_amount
-from v_customer_rental_info
+select  customer_id, 
+		last_name, email, 
+        sum(amount) as total_amount
+from 
+	v_customer_rental_info
 left join sakila.payment
 	using(customer_id)
 group by customer_id, last_name, email;
